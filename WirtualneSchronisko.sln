@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{14A39DE6-DBEB-40E4-981E-56A2076EADFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{E796B901-C46A-4725-9179-0FB255543F6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{98367D12-F5AD-46D8-B49E-6BB15E0BDC19}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{14A39DE6-DBEB-40E4-981E-56A2076EADFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14A39DE6-DBEB-40E4-981E-56A2076EADFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14A39DE6-DBEB-40E4-981E-56A2076EADFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14A39DE6-DBEB-40E4-981E-56A2076EADFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E796B901-C46A-4725-9179-0FB255543F6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E796B901-C46A-4725-9179-0FB255543F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E796B901-C46A-4725-9179-0FB255543F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E796B901-C46A-4725-9179-0FB255543F6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98367D12-F5AD-46D8-B49E-6BB15E0BDC19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98367D12-F5AD-46D8-B49E-6BB15E0BDC19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98367D12-F5AD-46D8-B49E-6BB15E0BDC19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98367D12-F5AD-46D8-B49E-6BB15E0BDC19}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3ED89F20-4E90-4CE4-89B9-F74C6D21BA25}
+	EndGlobalSection
+EndGlobal
