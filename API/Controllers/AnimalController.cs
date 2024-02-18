@@ -1,6 +1,8 @@
 ﻿using API.Repositories;
-using Domain;
+using Domain.DTOs;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace API.Controllers
 {
@@ -16,65 +18,68 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Animal>>> GetAnimals()
+        public async Task<ActionResult<List<AnimalDTO>>> GetAnimals()
         {
             try
             {
-                return Ok(await _animalRepository.GetAnimals());
+                var animalDTOs = await _animalRepository.GetAnimals();
+                return Ok(animalDTOs);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Error occured when retriving data from the database: " + ex.Message);
+                return StatusCode(500, "Error occurred when retrieving data from the database: " + ex.Message);
             }
         }
 
         [HttpGet("GetAnimalsByShelter/{shelterId}")]
-        public async Task<ActionResult<List<Animal>>> GetAnimalsByShelter(int shelterId)
+        public async Task<ActionResult<List<AnimalDTO>>> GetAnimalsByShelter(int shelterId)
         {
             try
             {
-                return Ok(await _animalRepository.GetAnimalsByShelter(shelterId));
+                var animalDTOs = await _animalRepository.GetAnimalsByShelter(shelterId);
+                return Ok(animalDTOs);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Error occured when retriving data from the database: " + ex.Message);
+                return StatusCode(500, "Error occurred when retrieving data from the database: " + ex.Message);
             }
         }
 
         [HttpGet("GetAnimal/{id}")]
-        public async Task<ActionResult<Animal>> GetAnimal(int id)
+        public async Task<ActionResult<AnimalDTO>> GetAnimal(int id)
         {
             try
             {
-                return Ok(await _animalRepository.GetAnimal(id));
+                var animalDTO = await _animalRepository.GetAnimal(id);
+
+                if (animalDTO == null)
+                {
+                    return NotFound($"Animal with ID {id} not found");
+                }
+
+                return Ok(animalDTO);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Error occured when retriving data from the database: " + ex.Message);
+                return StatusCode(500, "Error occurred when retrieving data from the database: " + ex.Message);
             }
         }
 
         [HttpPost("AddAnimal/{shelterId}")]
-        public async Task<ActionResult<Animal>> AddAnimal(Animal animal, int shelterId)
+        public async Task<ActionResult<AnimalDTO>> AddAnimal(AnimalDTO animalDTO, int shelterId)
         {
             try
             {
-                if (animal == null)
+                if (animalDTO == null)
                 {
                     return BadRequest();
                 }
 
-                var postedAnimal = await _animalRepository.AddAnimal(animal, shelterId);
+                var addedAnimalDTO = await _animalRepository.AddAnimal(animalDTO, shelterId);
 
-                if (postedAnimal != null)
+                if (addedAnimalDTO != null)
                 {
-                    var simplifiedResponse = new
-                    {
-                        Id = postedAnimal.Id,
-                        Name = postedAnimal.Name,
-                    };
-
-                    return CreatedAtAction(nameof(GetAnimal), new { id = postedAnimal.Id }, simplifiedResponse);
+                    return CreatedAtAction(nameof(GetAnimal), new { id = addedAnimalDTO.Id }, addedAnimalDTO);
                 }
 
                 return NotFound($"Shelter with ID {shelterId} not found");
@@ -86,27 +91,27 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Animal>> UpdateAnimal(int id, Animal animal)
+        public async Task<ActionResult<AnimalDTO>> UpdateAnimal(int id, AnimalDTO updatedAnimalDTO)
         {
             try
             {
-                if (id != animal.Id)
+                if (id != updatedAnimalDTO.Id)
                 {
-                    return BadRequest($"Id missmatch Given id: {id}, Checked id: {animal.Id}");
+                    return BadRequest($"Id mismatch. Given id: {id}, Checked id: {updatedAnimalDTO.Id}");
                 }
 
-                var animalToUpdate = await _animalRepository.GetAnimal(id);
+                var updatedAnimal = await _animalRepository.UpdateAnimal(updatedAnimalDTO);
 
-                if (animalToUpdate == null)
+                if (updatedAnimal == null)
                 {
-                    return NotFound($"Given animal of \"{id}\" not found");
+                    return NotFound($"Animal with ID {id} not found");
                 }
 
-                return await _animalRepository.UpdateAnimal(animal);
+                return Ok(updatedAnimal);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Error occured when trying to put data to the database: " + ex.Message);
+                return StatusCode(500, "Error occurred when trying to put data to the database: " + ex.Message);
             }
         }
 

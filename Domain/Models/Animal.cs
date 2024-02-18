@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Domain
+namespace Domain.Models
 {
     public class Animal
     {
@@ -19,7 +19,6 @@ namespace Domain
         public string MainPhotoUri { get; set; }
         public int ShelterId { get; set; }
 
-        [JsonIgnore]
         public Shelter Shelter { get; set; }
     }
 }

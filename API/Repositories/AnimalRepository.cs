@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Domain.DTOs;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -13,37 +14,51 @@ namespace API.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Animal> GetAnimal(int id)
+        public async Task<AnimalDTO> GetAnimal(int id)
         {
-            return await _dbContext.Animals.FirstOrDefaultAsync(x => x.Id == id);
+            var animal = await _dbContext.Animals.FirstOrDefaultAsync(x => x.Id == id);
+            return animal != null ? new AnimalDTO(animal) : null;
         }
 
-        public async Task<IEnumerable<Animal>> GetAnimals()
+        public async Task<IEnumerable<AnimalDTO>> GetAnimals()
         {
-            return await _dbContext.Animals.ToListAsync();
+            var animals = await _dbContext.Animals.ToListAsync();
+            return animals.Select(animal => new AnimalDTO(animal));
         }
 
-        public async Task<IEnumerable<Animal>> GetAnimalsByShelter(int shelterId)
+        public async Task<IEnumerable<AnimalDTO>> GetAnimalsByShelter(int shelterId)
         {
-            var result = await _dbContext.Animals
+            var animals = await _dbContext.Animals
             .Where(x => x.ShelterId == shelterId)
             .ToListAsync();
 
-            return result;
+            var animalDTOs = animals.Select(animal => new AnimalDTO(animal)).ToList();
+            return animalDTOs;
         }
 
-        public async Task<Animal> AddAnimal(Animal animal, int shelterId)
+        public async Task<AnimalDTO> AddAnimal(AnimalDTO animalDTO, int shelterId)
         {
             var shelter = await _dbContext.Shelters.FirstOrDefaultAsync(x => x.Id == shelterId);
 
             if (shelter != null)
             {
-                animal.ShelterId = shelterId;
+                var animal = new Animal
+                {
+                    LocalId = animalDTO.LocalId,
+                    Name = animalDTO.Name,
+                    Species = animalDTO.Species,
+                    Breed = animalDTO.Breed,
+                    Age = animalDTO.Age,
+                    Description = animalDTO.Description,
+                    MainPhotoUri = animalDTO.MainPhotoUri,
+                    ShelterId = animalDTO.ShelterId
+                };
 
                 _dbContext.Animals.Add(animal);
                 await _dbContext.SaveChangesAsync();
 
-                return animal;
+                var addedAnimalDTO = new AnimalDTO(animal);
+                return addedAnimalDTO;
             }
 
             return null;
@@ -59,23 +74,23 @@ namespace API.Repositories
             }
         }
 
-        public async Task<Animal> UpdateAnimal(Animal animal)
+        public async Task<AnimalDTO> UpdateAnimal(AnimalDTO updatedAnimalDTO)
         {
-            var animalToUpdate = await _dbContext.Animals.FirstOrDefaultAsync(x => x.Id == animal.Id);
+            var animalToUpdate = await _dbContext.Animals.FirstOrDefaultAsync(x => x.Id == updatedAnimalDTO.Id);
 
             if (animalToUpdate != null)
             {
-                animalToUpdate.LocalId = animal.LocalId;
-                animalToUpdate.Name = animal.Name;
-                animalToUpdate.Species = animal.Species;
-                animalToUpdate.Breed = animal.Breed;
-                animalToUpdate.Age = animal.Age;
-                animalToUpdate.Description = animal.Description;
-                animalToUpdate.MainPhotoUri = animal.MainPhotoUri;
+                animalToUpdate.LocalId = updatedAnimalDTO.LocalId;
+                animalToUpdate.Name = updatedAnimalDTO.Name;
+                animalToUpdate.Species = updatedAnimalDTO.Species;
+                animalToUpdate.Breed = updatedAnimalDTO.Breed;
+                animalToUpdate.Age = updatedAnimalDTO.Age;
+                animalToUpdate.Description = updatedAnimalDTO.Description;
+                animalToUpdate.MainPhotoUri = updatedAnimalDTO.MainPhotoUri;
 
                 await _dbContext.SaveChangesAsync();
 
-                return animalToUpdate;
+                return new AnimalDTO(animalToUpdate);
             }
 
             return null;
