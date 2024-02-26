@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Domain.DTOs;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -13,21 +14,38 @@ namespace API.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Shelter> GetShelter(int id)
+        public async Task<ShelterDTO> GetShelter(int id)
         {
-            return await _dbContext.Shelters.FirstOrDefaultAsync(x => x.Id == id);
+            var shelter = await _dbContext.Shelters.FirstOrDefaultAsync(x => x.Id == id);
+
+            return shelter != null ? new ShelterDTO(shelter) : null;
         }
 
-        public async Task<IEnumerable<Shelter>> GetShelters()
+        public async Task<IEnumerable<ShelterDTO>> GetShelters()
         {
-            return await _dbContext.Shelters.ToListAsync();
+            var shelters = await _dbContext.Shelters.ToListAsync();
+            return shelters.Select(shelter => new ShelterDTO(shelter));
         }
 
-        public async Task<Shelter> AddShelter(Shelter shelter)
+        public async Task<ShelterDTO> AddShelter(ShelterDTO shelterDTO)
         {
-            var result = await _dbContext.Shelters.AddAsync(shelter);
+            var shelter = new Shelter
+            {
+                Name = shelterDTO.Name,
+                City = shelterDTO.City,
+                Street = shelterDTO.Street,
+                PostalCode = shelterDTO.PostalCode,
+                Email = shelterDTO.Email,
+                Phone = shelterDTO.Phone,
+                Description = shelterDTO.Description,
+                MainPhotoUri = shelterDTO.MainPhotoUri
+            };
+
+            _dbContext.Shelters.Add(shelter);
             await _dbContext.SaveChangesAsync();
-            return result.Entity;
+
+            var addedShelterDTO = new ShelterDTO(shelter);
+            return addedShelterDTO;
         }
 
         public async Task DeleteShelter(int id)
@@ -41,24 +59,24 @@ namespace API.Repositories
             }
         }
 
-        public async Task<Shelter> UpdateShelter(Shelter shelter)
+        public async Task<ShelterDTO> UpdateShelter(ShelterDTO updatedShelterDTO)
         {
-            var shelterToUpdate = await _dbContext.Shelters.FirstOrDefaultAsync(x => x.Id == shelter.Id);
+            var shelterToUpdate = await _dbContext.Shelters.FirstOrDefaultAsync(x => x.Id == updatedShelterDTO.Id);
 
             if (shelterToUpdate != null)
             {
-                shelterToUpdate.Name = shelter.Name;
-                shelterToUpdate.City = shelter.City;
-                shelterToUpdate.Street = shelter.Street;
-                shelterToUpdate.PostalCode = shelter.PostalCode;
-                shelterToUpdate.Email = shelter.Email;
-                shelterToUpdate.Phone = shelter.Phone;
-                shelterToUpdate.Description = shelter.Description;
-                shelterToUpdate.MainPhotoUri = shelter.MainPhotoUri;
+                shelterToUpdate.Name = updatedShelterDTO.Name;
+                shelterToUpdate.City = updatedShelterDTO.City;
+                shelterToUpdate.Street = updatedShelterDTO.Street;
+                shelterToUpdate.PostalCode = updatedShelterDTO.PostalCode;
+                shelterToUpdate.Email = updatedShelterDTO.Email;
+                shelterToUpdate.Phone = updatedShelterDTO.Phone;
+                shelterToUpdate.Description = updatedShelterDTO.Description;
+                shelterToUpdate.MainPhotoUri = updatedShelterDTO.MainPhotoUri;
 
                 await _dbContext.SaveChangesAsync();
 
-                return shelterToUpdate;
+                return new ShelterDTO(shelterToUpdate);
             }
 
             return null;

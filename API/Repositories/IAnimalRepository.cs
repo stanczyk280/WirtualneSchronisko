@@ -1,5 +1,4 @@
 ﻿using Domain.DTOs;
-using Domain.Models;
 
 namespace API.Repositories
 {

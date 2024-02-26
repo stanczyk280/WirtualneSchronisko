@@ -1,16 +1,16 @@
-﻿using Domain.Models;
+﻿using Domain.DTOs;
 
 namespace API.Repositories
 {
     public interface IShelterRepository
     {
-        Task<IEnumerable<Shelter>> GetShelters();
+        Task<IEnumerable<ShelterDTO>> GetShelters();
 
-        Task<Shelter> GetShelter(int id);
+        Task<ShelterDTO> GetShelter(int id);
 
-        Task<Shelter> AddShelter(Shelter shelter);
+        Task<ShelterDTO> AddShelter(ShelterDTO shelter);
 
-        Task<Shelter> UpdateShelter(Shelter shelter);
+        Task<ShelterDTO> UpdateShelter(ShelterDTO shelter);
 
         Task DeleteShelter(int id);
     }

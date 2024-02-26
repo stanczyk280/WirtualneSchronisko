@@ -1,4 +1,5 @@
 ﻿using API.Repositories;
+using Domain.DTOs;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +15,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Shelter>>> GetShelters()
+        public async Task<ActionResult<List<ShelterDTO>>> GetShelters()
         {
             try
             {
@@ -27,7 +28,7 @@ namespace API.Controllers
         }
 
         [HttpGet("GetShelter/{id}")]
-        public async Task<ActionResult<Shelter>> GetShelter(int id)
+        public async Task<ActionResult<ShelterDTO>> GetShelter(int id)
         {
             try
             {
@@ -40,16 +41,16 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Shelter>> AddShelter(Shelter shelter)
+        public async Task<ActionResult<Shelter>> AddShelter(ShelterDTO shelterDTO)
         {
             try
             {
-                if (shelter == null)
+                if (shelterDTO == null)
                 {
                     return BadRequest();
                 }
 
-                var postedShelter = await _shelterRepository.AddShelter(shelter);
+                var postedShelter = await _shelterRepository.AddShelter(shelterDTO);
 
                 return CreatedAtAction(nameof(GetShelter), new { id = postedShelter.Id }, postedShelter);
             }
@@ -60,13 +61,13 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Shelter>> UpdateShelter(int id, Shelter shelter)
+        public async Task<ActionResult<ShelterDTO>> UpdateShelter(int id, ShelterDTO updatedShelterDTO)
         {
             try
             {
-                if (id != shelter.Id)
+                if (id != updatedShelterDTO.Id)
                 {
-                    return BadRequest($"Id missmatch Given id: {id}, Checked id: {shelter.Id}");
+                    return BadRequest($"Id missmatch Given id: {id}, Checked id: {updatedShelterDTO.Id}");
                 }
 
                 var shelterToUpdate = await _shelterRepository.GetShelter(id);
@@ -76,7 +77,7 @@ namespace API.Controllers
                     return NotFound($"Given shelter of \"{id}\" not found");
                 }
 
-                return await _shelterRepository.UpdateShelter(shelter);
+                return await _shelterRepository.UpdateShelter(updatedShelterDTO);
             }
             catch (Exception ex)
             {
